@@ -1,2 +1,2 @@
 @echo off
-csc /out:bin\\CodeMaker.exe src\\CodeMaker.cs
+csc /out:bin\\CodeMaker.exe src\\*.cs
