@@ -69,6 +69,7 @@ class CodeMakerForm : Form
 		
 		MenuItem newMenu = new MenuItem("New");
 		MenuItem createProjectMenuItem = new MenuItem("Project");
+		createProjectMenuItem.Click += new EventHandler(newProjectMenuItem_click);
 		newMenu.MenuItems.Add(createProjectMenuItem);
 		MenuItem createClassMenuItem = new MenuItem("Class");
 		newMenu.MenuItems.Add(createClassMenuItem);
@@ -122,6 +123,12 @@ class CodeMakerForm : Form
 	private void saveAsFileMenuItem_click(object sender, EventArgs e)
 	{
 		TextEditor.saveAsFile(fileTextBox.Text);
+	}
+
+	private void newProjectMenuItem_click(object sender, EventArgs e)
+	{
+		ProjectCreationForm newProjectForm = new ProjectCreationForm();
+		newProjectForm.ShowDialog();
 	}
 
 	[STAThread]
