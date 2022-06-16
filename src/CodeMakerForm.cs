@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using System.IO;
 
 namespace CodeMaker
 {
@@ -47,6 +48,17 @@ class CodeMakerForm : Form
 		TreeView classStructureTreeView = new TreeView();
 		classStructureTreeView.Dock = DockStyle.Fill;
 		classViewTab.Controls.Add(classStructureTreeView);
+		
+		ClassStructureReader csReader = new ClassStructureReader();
+		ClassStructureInfo csInfo = csReader.readProject("C:\\code\\code_maker");
+		classStructureTreeView.Nodes.Clear();
+		
+		foreach (TreeNode node in csInfo.asTreeView())
+		{
+			classStructureTreeView.Nodes.Add(node);
+		}
+		
+		classViewTab.Controls.Add(classStructureTreeView);
 	}
 	
 	private void buildTextEditor()
@@ -83,6 +95,13 @@ class CodeMakerForm : Form
 		openFileMenu.Click += new EventHandler(openFileMenuItem_click);
 		openMenu.MenuItems.Add(openFileMenu);
 		MenuItem openProjectMenu = new MenuItem("Project");
+		
+		foreach (string dirname in Directory.GetDirectories("C:\\code\\"))
+		{
+			MenuItem projectMenuItem = new MenuItem(Path.GetFileName(dirname));
+			openProjectMenu.MenuItems.Add(projectMenuItem);
+		}
+		
 		openMenu.MenuItems.Add(openProjectMenu);
 		fileMenu.MenuItems.Add(openMenu);
 		
