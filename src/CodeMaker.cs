@@ -1,12 +1,9 @@
 using System;
 using System.IO;
-using System.ComponentModel;
-using System.Drawing;
-using System.Windows.Forms;
 
-namespace CodeMaker
+namespace ProjectCreator
 {
-class CodeMaker
+class ProjectCreator
 {
 	private static string buildFileContents = 
 	"@echo off\n"

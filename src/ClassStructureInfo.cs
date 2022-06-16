@@ -1,0 +1,9 @@
+namespace CodeMaker
+{
+
+class ClassStructureInfo
+{
+	
+}
+
+}
