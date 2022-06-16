@@ -10,10 +10,16 @@ class CodeMakerForm : Form
 {
 	private TreeView fileStructureTreeView;
 	private RichTextBox fileTextBox;
+	
+	private bool textChanged;
+	private string currentFile;
 
 	public CodeMakerForm()
 	{
 		buildGUI();
+		
+		textChanged = false;
+		currentFile = "";
 	}
 	
 	private void buildProjectViewTabControl()
@@ -69,6 +75,7 @@ class CodeMakerForm : Form
 		fileTextBox.ReadOnly = false;
 		fileTextBox.SelectionAlignment = HorizontalAlignment.Left;
 		fileTextBox.AcceptsTab = true;
+		fileTextBox.KeyPress += fileTextEditor_keyPress;
 		this.Controls.Add(fileTextBox);
 		this.Controls.SetChildIndex(fileTextBox, 0);
 	}
@@ -123,6 +130,7 @@ class CodeMakerForm : Form
 		//Form info
 		this.Size = new Size(800, 600);
 		this.Text = "CodeMaker";
+		this.FormClosing += CodeMakerForm_Closing;
 		
 		buildProjectViewTabControl();
 		buildTextEditor();
@@ -131,23 +139,80 @@ class CodeMakerForm : Form
 
 	private void openFileMenuItem_click(object sender, EventArgs e)
 	{
-		fileTextBox.Text = TextEditor.openFile();
+		using (OpenFileDialog fileDialog = new OpenFileDialog())
+		{
+			fileDialog.InitialDirectory = "C:\\code\\";
+			if (currentFile != "")
+			{
+				fileDialog.InitialDirectory = currentFile;
+			}
+			
+			if (fileDialog.ShowDialog() == DialogResult.OK)
+			{
+				currentFile = fileDialog.FileName;
+				fileTextBox.Text = File.ReadAllText(currentFile);
+			}
+		}
+		if (textChanged)
+		{
+			MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+			DialogResult result = MessageBox.Show("Save current work?", "Open file", buttons);
+			if (result == DialogResult.Yes)
+			{
+				saveFileMenuItem_click(this, new EventArgs());
+			}
+			textChanged = false;
+		}
 	}
 	
 	private void saveFileMenuItem_click(object sender, EventArgs e)
 	{
-		TextEditor.saveFile(fileTextBox.Text);
+		if (currentFile != "")
+		{
+			File.WriteAllText(currentFile, fileTextBox.Text);
+		}
 	}
 	
 	private void saveAsFileMenuItem_click(object sender, EventArgs e)
 	{
-		TextEditor.saveAsFile(fileTextBox.Text);
+		using (SaveFileDialog fileDialog = new SaveFileDialog())
+		{
+			fileDialog.InitialDirectory = "C:\\code\\";
+			if (currentFile != "")
+			{
+				fileDialog.InitialDirectory = currentFile;
+			}
+			
+			if (fileDialog.ShowDialog() == DialogResult.OK)
+			{
+				currentFile = fileDialog.FileName;
+				File.WriteAllText(currentFile, fileTextBox.Text);
+			}
+		}
 	}
 
 	private void newProjectMenuItem_click(object sender, EventArgs e)
 	{
 		ProjectCreationForm newProjectForm = new ProjectCreationForm();
 		newProjectForm.ShowDialog();
+	}
+
+	private void fileTextEditor_keyPress(object sender, KeyPressEventArgs e)
+	{
+		textChanged = true;
+	}
+	
+	private void CodeMakerForm_Closing(object sender, FormClosingEventArgs e)
+	{
+		if (textChanged)
+		{
+			MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+			DialogResult result = MessageBox.Show("Save current work?", "Exiting", buttons);
+			if (result == DialogResult.Yes)
+			{
+				saveFileMenuItem_click(this, new EventArgs());
+			}
+		}
 	}
 
 	[STAThread]
