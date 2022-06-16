@@ -8,7 +8,7 @@ namespace CodeMaker
 class CodeMakerForm : Form
 {
 	private TreeView fileStructureTreeView;
-	private TextBox fileTextBox;
+	private RichTextBox fileTextBox;
 
 	public CodeMakerForm()
 	{
@@ -51,11 +51,12 @@ class CodeMakerForm : Form
 	
 	private void buildTextEditor()
 	{
-		fileTextBox = new TextBox();
+		fileTextBox = new RichTextBox();
 		fileTextBox.Multiline = true;
 		fileTextBox.Dock = DockStyle.Fill;
 		fileTextBox.ReadOnly = false;
-		fileTextBox.TextAlign = HorizontalAlignment.Left;
+		fileTextBox.SelectionAlignment = HorizontalAlignment.Left;
+		fileTextBox.AcceptsTab = true;
 		this.Controls.Add(fileTextBox);
 		this.Controls.SetChildIndex(fileTextBox, 0);
 	}
@@ -68,22 +69,28 @@ class CodeMakerForm : Form
 		
 		MenuItem newMenu = new MenuItem("New");
 		MenuItem createProjectMenuItem = new MenuItem("Project");
-		MenuItem createClassMenuItem = new MenuItem("Class");
 		newMenu.MenuItems.Add(createProjectMenuItem);
+		MenuItem createClassMenuItem = new MenuItem("Class");
 		newMenu.MenuItems.Add(createClassMenuItem);
+		MenuItem createFileMenuItem = new MenuItem("File");
+		
+		newMenu.MenuItems.Add(createFileMenuItem);
 		fileMenu.MenuItems.Add(newMenu);
 		
 		MenuItem openMenu = new MenuItem("Open");
 		MenuItem openFileMenu = new MenuItem("File");
+		openFileMenu.Click += new EventHandler(openFileMenuItem_click);
 		openMenu.MenuItems.Add(openFileMenu);
 		MenuItem openProjectMenu = new MenuItem("Project");
 		openMenu.MenuItems.Add(openProjectMenu);
 		fileMenu.MenuItems.Add(openMenu);
 		
 		MenuItem saveMenu = new MenuItem("Save");
+		saveMenu.Click += new EventHandler(saveFileMenuItem_click);
 		fileMenu.MenuItems.Add(saveMenu);
 		
 		MenuItem saveAsMenu = new MenuItem("Save As");
+		saveAsMenu.Click += new EventHandler(saveAsFileMenuItem_click);
 		fileMenu.MenuItems.Add(saveAsMenu);
 		
 		formMenu.MenuItems.Add(fileMenu);
@@ -100,6 +107,21 @@ class CodeMakerForm : Form
 		buildProjectViewTabControl();
 		buildTextEditor();
 		buildMenu();
+	}
+
+	private void openFileMenuItem_click(object sender, EventArgs e)
+	{
+		fileTextBox.Text = TextEditor.openFile();
+	}
+	
+	private void saveFileMenuItem_click(object sender, EventArgs e)
+	{
+		TextEditor.saveFile(fileTextBox.Text);
+	}
+	
+	private void saveAsFileMenuItem_click(object sender, EventArgs e)
+	{
+		TextEditor.saveAsFile(fileTextBox.Text);
 	}
 
 	[STAThread]
