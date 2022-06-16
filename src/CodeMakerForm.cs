@@ -7,6 +7,7 @@ namespace CodeMaker
 {
 class CodeMakerForm : Form
 {
+	private TreeView fileStructureTreeView;
 
 	public CodeMakerForm()
 	{
@@ -17,12 +18,22 @@ class CodeMakerForm : Form
 	{
 		this.Size = new Size(250, 110);
 		this.Text = "CodeMaker";
-		this.FormBorderStyle = FormBorderStyle.FixedSingle;
-	}
+		//this.FormBorderStyle = FormBorderStyle.FixedSingle;
+		
+		fileStructureTreeView = new TreeView();
+		fileStructureTreeView.Size = new Size(200, 100);
+		fileStructureTreeView.Location = new Point(0, 0);
+		
+		FileStructureReader fsReader = new FileStructureReader();
+		FileStructureInfo fsInfo = fsReader.readDirectory("C:\\code");
+		fileStructureTreeView.Nodes.Clear();
 
-	private void makeProjectButton_click(object sender, EventArgs e)
-	{
-		ProjectCreator.createProject(projectNameTextBox.Text);
+		foreach (TreeNode node in fsInfo.asTreeView())
+		{
+			fileStructureTreeView.Nodes.Add(node);
+		}
+		
+		this.Controls.Add(fileStructureTreeView);
 	}
 
 	[STAThread]

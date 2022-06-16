@@ -36,7 +36,7 @@ class ProjectCreationForm : Form
 
 	private void makeProjectButton_click(object sender, EventArgs e)
 	{
-		CodeMaker.createProject(projectNameTextBox.Text);
+		ProjectCreator.createProject(projectNameTextBox.Text);
 	}
 }
 }
