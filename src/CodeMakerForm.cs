@@ -13,6 +13,7 @@ class CodeMakerForm : Form
 {
 	CodeMakerMainMenu mainMenu;
 	TextEditorRichTextBox textEditorTextBox;
+	TerminalRichTextBox terminalTextBox;
 	
 	public CodeMakerForm()
 	{
@@ -23,7 +24,9 @@ class CodeMakerForm : Form
 		textEditorTextBox.KeyPress += (sender, e) => onTextEditorChanged();
 		this.Controls.Add(textEditorTextBox);
 		this.Controls.Add(new ProjectViewTabControl());
-		this.Controls.Add(new TerminalRichTextBox());
+		
+		terminalTextBox = new TerminalRichTextBox();
+		this.Controls.Add(terminalTextBox);
 		
 		mainMenu = new CodeMakerMainMenu();
 		mainMenu.OpenFile += () => onOpenFile();
@@ -43,6 +46,11 @@ class CodeMakerForm : Form
 	public void setEditorContents(string text)
 	{
 		textEditorTextBox.Text = text;
+	}
+	
+	public void appendToTerminal(string line)
+	{
+		terminalTextBox.AppendText(line);
 	}
 	
 	public void loadDirectory(string path)

@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
 using System.IO;
+using System.Diagnostics;
 
 namespace CodeMaker
 {
@@ -70,22 +71,6 @@ class CodeMaker
 	
 	public void buildProject()
 	{
-		
-	}
-	
-	public void textChangedEvent()
-	{
-		textChanged = true;
-	}
-	
-	public void runProject()
-	{
-		
-	}
-	
-	/*
-	private void buildProject(object sender, EventArgs e)
-	{
 		Process buildProcess = new Process();
 		buildProcess.StartInfo.FileName = "C:\\code\\code_maker\\build.bat";
 		buildProcess.StartInfo.CreateNoWindow = true;
@@ -100,21 +85,24 @@ class CodeMaker
 	
 	private void buildOutputHandler(object sender, DataReceivedEventArgs e)
 	{
-		//Trace.WriteLine(e.Data);
-		this.BeginInvoke(new MethodInvoker(() =>
+		mainForm.BeginInvoke(new MethodInvoker(() =>
 		{
 			if (e.Data != null)
 			{
-				terminalTextBox.AppendText(e.Data+'\n');
+				mainForm.appendToTerminal(e.Data+'\n');
 			}	
 		}));
 	}
 	
-	private void runProject(object sender, EventArgs e)
+	public void textChangedEvent()
+	{
+		textChanged = true;
+	}
+	
+	public void runProject()
 	{
 		Process.Start("C:\\code\\code_maker\\bin\\CodeMaker.exe");
 	}
-	*/
 	
 	public void saveFile()
 	{
