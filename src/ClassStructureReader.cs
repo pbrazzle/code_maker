@@ -12,15 +12,9 @@ class ClassStructureReader
 	
 	public ClassStructureInfo readProject(string path)
 	{
-		Console.WriteLine("Reading Project");
 		string[] codeFileNames = findAllCodeFiles(path);
-		
-		Console.WriteLine("Looking for classes");
 		List<ClassInfo> classInfoList = findAllClasses(codeFileNames);
-		
-		Console.WriteLine("Linking class tree");
 		classInfoList = linkChildren(classInfoList);
-		
 		return new ClassStructureInfo(classInfoList);
 	}
 	
