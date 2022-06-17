@@ -1,7 +1,7 @@
 using System.Windows.Forms;
 using System.Collections.Generic;
 
-namespace CodeMaker
+namespace CodeMaker.Analysis
 {
 
 class FileInfoNode

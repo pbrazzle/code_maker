@@ -1,7 +1,7 @@
 using System.IO;
 using System.Collections.Generic;
 
-namespace CodeMaker
+namespace CodeMaker.Analysis
 {
 
 class FileStructureReader

@@ -2,7 +2,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System;
 
-namespace CodeMaker
+namespace CodeMaker.Analysis
 {
 
 class ClassInfo : IEquatable<ClassInfo>
