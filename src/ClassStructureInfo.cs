@@ -1,7 +1,9 @@
 using System.Windows.Forms;
 using System.Collections.Generic;
 
-namespace CodeMaker.Analysis
+using CodeMaker.Analysis;
+
+namespace CodeMaker
 {
 
 class ClassStructureInfo

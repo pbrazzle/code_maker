@@ -8,9 +8,11 @@ using CodeMaker.UI;
 namespace CodeMaker
 {
 
+public delegate void Notify();
+
 class CodeMaker
 {
-	private CodeMakerForm mainForm;
+	private ICodeMakerMainView mainView;
 	
 	private bool textChanged;
 	private string currentFile;
@@ -20,16 +22,15 @@ class CodeMaker
 		textChanged = false;
 		currentFile = "";
 		
-		mainForm = new CodeMakerForm();
-		mainForm.OpenFile += () => openFile();
-		mainForm.SaveFile += () => saveFile();
-		mainForm.SaveFileAs += () => saveFileAs();
-		mainForm.BuildProject += () => buildProject();
-		mainForm.RunProject += () => runProject();
-		mainForm.NewProject += () => createNewProject();
-		mainForm.TextEditorChanged += () => textChangedEvent();
-		Application.EnableVisualStyles();
-		Application.Run(mainForm);
+		mainView = new CodeMakerForm();
+		mainView.OpenFile += () => openFile();
+		mainView.SaveFile += () => saveFile();
+		mainView.SaveFileAs += () => saveFileAs();
+		mainView.BuildProject += () => buildProject();
+		mainView.RunProject += () => runProject();
+		mainView.NewProject += () => createNewProject();
+		mainView.TextEditorChanged += () => textChangedEvent();
+		mainView.show();
 	}
 	
 	public void openFile()
@@ -45,7 +46,7 @@ class CodeMaker
 			if (fileDialog.ShowDialog() == DialogResult.OK)
 			{
 				currentFile = fileDialog.FileName;
-				mainForm.setEditorContents(File.ReadAllText(currentFile));
+				mainView.setEditorContents(File.ReadAllText(currentFile));
 			}
 		}
 		if (textChanged)
@@ -68,7 +69,7 @@ class CodeMaker
 	
 	public void setForm(CodeMakerForm form)
 	{
-		mainForm = form;
+		mainView = form;
 	}
 	
 	public void buildProject()
@@ -87,13 +88,10 @@ class CodeMaker
 	
 	private void buildOutputHandler(object sender, DataReceivedEventArgs e)
 	{
-		mainForm.BeginInvoke(new MethodInvoker(() =>
+		if (e.Data != null)
 		{
-			if (e.Data != null)
-			{
-				mainForm.appendToTerminal(e.Data+'\n');
-			}	
-		}));
+			mainView.appendToTerminal(e.Data+'\n');
+		}	
 	}
 	
 	public void textChangedEvent()
@@ -110,7 +108,7 @@ class CodeMaker
 	{
 		if (currentFile != "")
 		{
-			File.WriteAllText(currentFile, mainForm.getEditorContents());
+			File.WriteAllText(currentFile, mainView.getEditorContents());
 		}
 	}
 	
@@ -127,7 +125,7 @@ class CodeMaker
 			if (fileDialog.ShowDialog() == DialogResult.OK)
 			{
 				currentFile = fileDialog.FileName;
-				File.WriteAllText(currentFile, mainForm.getEditorContents());
+				File.WriteAllText(currentFile, mainView.getEditorContents());
 			}
 		}
 	}

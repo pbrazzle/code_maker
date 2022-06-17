@@ -5,11 +5,9 @@ using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
 
-using CodeMaker.UI;
-
-namespace CodeMaker
+namespace CodeMaker.UI
 {
-class CodeMakerForm : Form
+class CodeMakerForm : Form, ICodeMakerMainView
 {
 	CodeMakerMainMenu mainMenu;
 	TextEditorRichTextBox textEditorTextBox;
@@ -38,6 +36,12 @@ class CodeMakerForm : Form
 		this.Menu = mainMenu;
 	}
 	
+	public void show()
+	{
+		Application.EnableVisualStyles();
+		Application.Run(this);
+	}
+	
 	public string getEditorContents()
 	{
 		return textEditorTextBox.Text;
@@ -53,12 +57,15 @@ class CodeMakerForm : Form
 		terminalTextBox.AppendText(line);
 	}
 	
-	public void loadDirectory(string path)
+	public void setFileStructureInfo(FileStructureInfo info)
 	{
 		
 	}
 	
-	public delegate void Notify();
+	public void setClassStructureInfo(ClassStructureInfo info)
+	{
+		
+	}
 	
 	public event Notify OpenFile, SaveFile, SaveFileAs, RunProject, BuildProject, TextEditorChanged, NewProject;
 	
