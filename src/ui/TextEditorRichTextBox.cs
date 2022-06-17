@@ -12,7 +12,6 @@ class TextEditorRichTextBox : RichTextBox
 		this.ReadOnly = false;
 		this.SelectionAlignment = HorizontalAlignment.Left;
 		this.AcceptsTab = true;
-		this.KeyPress += CodeMaker.textChangedEvent;
 	}
 }
 
