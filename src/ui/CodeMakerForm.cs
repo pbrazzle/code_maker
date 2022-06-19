@@ -69,18 +69,21 @@ class CodeMakerForm : Form
 		}
 		string contents = textEditor.openFile();
 		textEditorTextBox.Text = contents != null ? contents : textEditorTextBox.Text;
+		terminalTextBox.AppendText("Opened file\n");
 	}
 	
 	private void onSaveFile()
 	{
 		textEditor.saveFile(textEditorTextBox.Text);
 		textChanged = false;
+		terminalTextBox.AppendText("File Saved\n");
 	}
 	
 	private void onSaveFileAs()
 	{
 		textEditor.saveFileAs(textEditorTextBox.Text);
 		textChanged = false;
+		terminalTextBox.AppendText("File Saved\n");
 	}
 	
 	private void onTextEditorChanged()
@@ -91,6 +94,7 @@ class CodeMakerForm : Form
 	//Project management should be moved to main package class
 	private void onBuildProject()
 	{
+		terminalTextBox.AppendText("Building Project...\n");
 		Process buildProcess = new Process();
 		buildProcess.StartInfo.FileName = "C:\\code\\code_maker\\build.bat";
 		buildProcess.StartInfo.CreateNoWindow = true;
@@ -107,12 +111,13 @@ class CodeMakerForm : Form
 	{
 		if (e.Data != null)
 		{
-			terminalTextBox.AppendText(e.Data);
+			terminalTextBox.AppendText(e.Data+'\n');
 		}	
 	}
 	
 	private void onRunProject()
 	{
+		terminalTextBox.AppendText("Running Project...\n");
 		Process.Start("C:\\code\\code_maker\\bin\\CodeMaker.exe");
 	}
 	
