@@ -5,16 +5,24 @@ using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
 
+using CodeMaker;
+
 namespace CodeMaker.UI
 {
-class CodeMakerForm : Form, ICodeMakerMainView
+class CodeMakerForm : Form
 {
 	CodeMakerMainMenu mainMenu;
 	TextEditorRichTextBox textEditorTextBox;
 	TerminalRichTextBox terminalTextBox;
+	bool textChanged;
+	string currentFile;
+	
+	private CodeMaker codeMaker;
 	
 	public CodeMakerForm()
 	{
+		textChanged = false;
+		currentFile = "";
 		this.Size = new Size(800, 600);
 		this.Text = "CodeMaker";
 		
@@ -34,6 +42,17 @@ class CodeMakerForm : Form, ICodeMakerMainView
 		mainMenu.RunProject += () => onRunProject();
 		mainMenu.NewProject += () => onNewProject();
 		this.Menu = mainMenu;
+		
+		codeMaker = new CodeMaker();
+		
+		Application.EnableVisualStyles();
+		Application.Run(this);
+	}
+	
+	[STAThread]
+	public static void Main()
+	{
+		new CodeMakerForm();
 	}
 	
 	public void show()
@@ -67,48 +86,96 @@ class CodeMakerForm : Form, ICodeMakerMainView
 		
 	}
 	
-	public event Notify OpenFile, SaveFile, SaveFileAs, RunProject, BuildProject, TextEditorChanged, NewProject;
-	
 	protected virtual void onOpenFile()
 	{
-		Notify handler = OpenFile;
-		if (handler != null) handler.Invoke();
+		using (OpenFileDialog fileDialog = new OpenFileDialog())
+		{
+			fileDialog.InitialDirectory = "C:\\code\\";
+			if (currentFile != "")
+			{
+				fileDialog.InitialDirectory = currentFile;
+			}
+			
+			if (fileDialog.ShowDialog() == DialogResult.OK)
+			{
+				currentFile = fileDialog.FileName;
+				textEditorTextBox.Text = File.ReadAllText(currentFile);
+			}
+		}
+		if (textChanged)
+		{
+			MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+			DialogResult result = MessageBox.Show("Save current work?", "Open file", buttons);
+			if (result == DialogResult.Yes)
+			{
+				onSaveFile();
+			}
+			textChanged = false;
+		}
 	}
 	
 	protected virtual void onSaveFile()
 	{
-		Notify handler = SaveFile;
-		if (handler != null) handler.Invoke();
+		if (currentFile != "")
+		{
+			File.WriteAllText(currentFile, textEditorTextBox.Text);
+		}
 	}
 	
 	protected virtual void onSaveFileAs()
 	{
-		Notify handler = SaveFileAs;
-		if (handler != null) handler.Invoke();
+		using (SaveFileDialog fileDialog = new SaveFileDialog())
+		{
+			fileDialog.InitialDirectory = "C:\\code\\";
+			if (currentFile != "")
+			{
+				fileDialog.InitialDirectory = currentFile;
+			}
+			
+			if (fileDialog.ShowDialog() == DialogResult.OK)
+			{
+				currentFile = fileDialog.FileName;
+				File.WriteAllText(currentFile, textEditorTextBox.Text);
+			}
+		}
 	}
 	
 	protected virtual void onBuildProject()
 	{
-		Notify handler = BuildProject;
-		if (handler != null) handler.Invoke();
+		Process buildProcess = new Process();
+		buildProcess.StartInfo.FileName = "C:\\code\\code_maker\\build.bat";
+		buildProcess.StartInfo.CreateNoWindow = true;
+		buildProcess.StartInfo.UseShellExecute = false;
+		buildProcess.StartInfo.RedirectStandardOutput = true;
+		
+		buildProcess.OutputDataReceived += new DataReceivedEventHandler(buildOutputHandler);
+		buildProcess.Start();
+		buildProcess.BeginOutputReadLine();
+		buildProcess.WaitForExit();
+	}
+	
+	private void buildOutputHandler(object sender, DataReceivedEventArgs e)
+	{
+		if (e.Data != null)
+		{
+			terminalTextBox.AppendText(e.Data);
+		}	
 	}
 	
 	protected virtual void onRunProject()
 	{
-		Notify handler = RunProject;
-		if (handler != null) handler.Invoke();
+		Process.Start("C:\\code\\code_maker\\bin\\CodeMaker.exe");
 	}
 	
 	protected virtual void onNewProject()
 	{
-		Notify handler = NewProject;
-		if (handler != null) handler.Invoke();
+		ProjectCreationForm newProjectForm = new ProjectCreationForm();
+		newProjectForm.ShowDialog();
 	}
 	
 	protected virtual void onTextEditorChanged()
 	{
-		Notify handler = TextEditorChanged;
-		if (handler != null) handler.Invoke();
+		textChanged = true;
 	}
 }
 }
