@@ -3,15 +3,19 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
+using CodeMaker;
+
 namespace CodeMaker.UI
 {
 class ProjectCreationForm : Form
 {
 	private TextBox projectNameTextBox;
+	private ProjectCreator projectCreator;
 
 	public ProjectCreationForm()
 	{
 		buildGUI();
+		projectCreator = new ProjectCreator();
 	}
 	
 	private void buildGUI()
@@ -42,7 +46,7 @@ class ProjectCreationForm : Form
 
 	private void makeProjectButton_click(object sender, EventArgs e)
 	{
-		ProjectCreator.createProject(projectNameTextBox.Text);
+		projectCreator.createProject(projectNameTextBox.Text);
 		DialogResult = DialogResult.OK;
 		Dispose();
 	}

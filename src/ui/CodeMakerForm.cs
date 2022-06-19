@@ -11,24 +11,24 @@ namespace CodeMaker.UI
 {
 class CodeMakerForm : Form
 {
-	CodeMakerMainMenu mainMenu;
-	TextEditorRichTextBox textEditorTextBox;
-	TerminalRichTextBox terminalTextBox;
-	bool textChanged;
-	string currentFile;
-	
+	private CodeMakerMainMenu mainMenu;
+	private TextEditorRichTextBox textEditorTextBox;
+	private TerminalRichTextBox terminalTextBox;
+	private TextEditor textEditor;
+	private bool textChanged;
 	private CodeMaker codeMaker;
 	
 	public CodeMakerForm()
 	{
-		textChanged = false;
-		currentFile = "";
 		this.Size = new Size(800, 600);
 		this.Text = "CodeMaker";
+		textEditor = new TextEditor();
+		textChanged = false;
 		
 		textEditorTextBox = new TextEditorRichTextBox();
 		textEditorTextBox.KeyPress += (sender, e) => onTextEditorChanged();
 		this.Controls.Add(textEditorTextBox);
+		
 		this.Controls.Add(new ProjectViewTabControl());
 		
 		terminalTextBox = new TerminalRichTextBox();
@@ -55,92 +55,41 @@ class CodeMakerForm : Form
 		new CodeMakerForm();
 	}
 	
-	public void show()
+	private void onOpenFile()
 	{
-		Application.EnableVisualStyles();
-		Application.Run(this);
-	}
-	
-	public string getEditorContents()
-	{
-		return textEditorTextBox.Text;
-	}
-	
-	public void setEditorContents(string text)
-	{
-		textEditorTextBox.Text = text;
-	}
-	
-	public void appendToTerminal(string line)
-	{
-		terminalTextBox.AppendText(line);
-	}
-	
-	public void setFileStructureInfo(FileStructureInfo info)
-	{
-		
-	}
-	
-	public void setClassStructureInfo(ClassStructureInfo info)
-	{
-		
-	}
-	
-	protected virtual void onOpenFile()
-	{
-		using (OpenFileDialog fileDialog = new OpenFileDialog())
-		{
-			fileDialog.InitialDirectory = "C:\\code\\";
-			if (currentFile != "")
-			{
-				fileDialog.InitialDirectory = currentFile;
-			}
-			
-			if (fileDialog.ShowDialog() == DialogResult.OK)
-			{
-				currentFile = fileDialog.FileName;
-				textEditorTextBox.Text = File.ReadAllText(currentFile);
-			}
-		}
 		if (textChanged)
 		{
 			MessageBoxButtons buttons = MessageBoxButtons.YesNo;
 			DialogResult result = MessageBox.Show("Save current work?", "Open file", buttons);
 			if (result == DialogResult.Yes)
 			{
-				onSaveFile();
+				textEditor.saveFile(textEditorTextBox.Text);
 			}
 			textChanged = false;
 		}
+		string contents = textEditor.openFile();
+		textEditorTextBox.Text = contents != null ? contents : textEditorTextBox.Text;
 	}
 	
-	protected virtual void onSaveFile()
+	private void onSaveFile()
 	{
-		if (currentFile != "")
-		{
-			File.WriteAllText(currentFile, textEditorTextBox.Text);
-		}
+		textEditor.saveFile(textEditorTextBox.Text);
+		textChanged = false;
 	}
 	
-	protected virtual void onSaveFileAs()
+	private void onSaveFileAs()
 	{
-		using (SaveFileDialog fileDialog = new SaveFileDialog())
-		{
-			fileDialog.InitialDirectory = "C:\\code\\";
-			if (currentFile != "")
-			{
-				fileDialog.InitialDirectory = currentFile;
-			}
-			
-			if (fileDialog.ShowDialog() == DialogResult.OK)
-			{
-				currentFile = fileDialog.FileName;
-				File.WriteAllText(currentFile, textEditorTextBox.Text);
-			}
-		}
+		textEditor.saveFileAs(textEditorTextBox.Text);
+		textChanged = false;
 	}
 	
-	protected virtual void onBuildProject()
+	private void onTextEditorChanged()
+	{
+		textChanged = true;
+	}
+	
+	//Project management should be moved to main package class
+	private void onBuildProject()
 	{
 		Process buildProcess = new Process();
 		buildProcess.StartInfo.FileName = "C:\\code\\code_maker\\build.bat";
@@ -162,20 +111,15 @@ class CodeMakerForm : Form
 		}	
 	}
 	
-	protected virtual void onRunProject()
+	private void onRunProject()
 	{
 		Process.Start("C:\\code\\code_maker\\bin\\CodeMaker.exe");
 	}
 	
-	protected virtual void onNewProject()
+	private void onNewProject()
 	{
 		ProjectCreationForm newProjectForm = new ProjectCreationForm();
 		newProjectForm.ShowDialog();
-	}
-	
-	protected virtual void onTextEditorChanged()
-	{
-		textChanged = true;
 	}
 }
 }

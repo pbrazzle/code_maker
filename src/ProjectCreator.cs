@@ -5,11 +5,11 @@ namespace CodeMaker
 {
 class ProjectCreator
 {
-	private static string buildFileContents = 
+	private string buildFileContents = 
 	"@echo off\n"
 	+"csc /out:bin\\$PROJ_NAME$.exe src\\$PROJ_NAME$.cs\n";
 	
-	private static string helloWorldFileContents =
+	private string helloWorldFileContents =
 	"namespace $PROJ_NAME$\n"
 	+"{\n"
 	+"	class $PROJ_NAME$\n"
@@ -21,7 +21,12 @@ class ProjectCreator
 	+"	}\n"
 	+"}\n";
 	
-	public static void createProject(string name)
+	public ProjectCreator()
+	{
+		
+	}
+	
+	public void createProject(string name)
 	{
 		Directory.CreateDirectory("C:\\code\\"+name);
 		Directory.CreateDirectory("C:\\code\\"+name+"\\src");
