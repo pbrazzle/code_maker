@@ -18,7 +18,8 @@ class CodeMakerForm : Form
 	private TerminalRichTextBox terminalTextBox;
 	private TextEditor textEditor;
 	private bool textChanged;
-	private CodeMaker codeMaker;
+	
+	private CodeMakerProject currentProject;
 	
 	public CodeMakerForm()
 	{
@@ -40,12 +41,13 @@ class CodeMakerForm : Form
 		mainMenu.OpenFile += () => onOpenFile();
 		mainMenu.SaveFile += () => onSaveFile();
 		mainMenu.SaveFileAs += () => onSaveFileAs();
-		mainMenu.BuildProject += () => onBuildProject();
-		mainMenu.RunProject += () => onRunProject();
+		mainMenu.BuildProject += () => currentProject.build();
+		mainMenu.RunProject += () => currentProject.run();
 		mainMenu.NewProject += () => onNewProject();
 		this.Menu = mainMenu;
 		
-		codeMaker = new CodeMaker();
+		currentProject = new CodeMakerProject("C:\\code\\code_maker", "CodeMaker");
+		currentProject.buildStandardOutput += buildOutputHandler;
 		
 		Application.EnableVisualStyles();
 		Application.Run(this);
@@ -102,34 +104,12 @@ class CodeMakerForm : Form
 		textChanged = true;
 	}
 	
-	//Project management should be moved to main package class
-	private void onBuildProject()
-	{
-		terminalTextBox.AppendText("Building Project...\n");
-		Process buildProcess = new Process();
-		buildProcess.StartInfo.FileName = "C:\\code\\code_maker\\build.bat";
-		buildProcess.StartInfo.CreateNoWindow = true;
-		buildProcess.StartInfo.UseShellExecute = false;
-		buildProcess.StartInfo.RedirectStandardOutput = true;
-		
-		buildProcess.OutputDataReceived += new DataReceivedEventHandler(buildOutputHandler);
-		buildProcess.Start();
-		buildProcess.BeginOutputReadLine();
-		buildProcess.WaitForExit();
-	}
-	
 	private void buildOutputHandler(object sender, DataReceivedEventArgs e)
 	{
 		if (e.Data != null)
 		{
 			terminalTextBox.AppendText(e.Data+'\n');
 		}	
-	}
-	
-	private void onRunProject()
-	{
-		terminalTextBox.AppendText("Running Project...\n");
-		Process.Start("C:\\code\\code_maker\\bin\\CodeMaker.exe");
 	}
 	
 	private void onNewProject()
