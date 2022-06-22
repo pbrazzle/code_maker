@@ -4,8 +4,10 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 using CodeMaker;
+using CodeMaker.Analysis;
 
 namespace CodeMaker.UI
 {
@@ -53,6 +55,14 @@ class CodeMakerForm : Form
 	public static void Main()
 	{
 		new CodeMakerForm();
+		
+		CSharpTokenizer tokenizer = new CSharpTokenizer();
+		List<CodeToken> tokens = tokenizer.getTokenList(File.ReadAllText("C:\\code\\code_maker\\src\\ui\\CodeMakerForm.cs"));
+		
+		foreach (CodeToken token in tokens)
+		{
+			Console.WriteLine(token.asString());
+		}
 	}
 	
 	private void onOpenFile()
