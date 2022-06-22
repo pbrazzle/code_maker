@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace CodeMaker.Analysis
 {
@@ -11,49 +12,19 @@ class CSharpDependencyFinder
 		
 	}
 	
-	public List<string> findDependencies(List<CodeToken> tokens)
+	public List<string> findDependencies(string rawCode)
 	{
 		List<string> dependencies = new List<string>();
 		
-		List<List<CodeToken>> statements = splitStatements(tokens);
+		Regex tokenizer = new Regex("(?<=using ).+(?=;)");
+		MatchCollection tokenMatches = tokenizer.Matches(rawCode);
 		
-		foreach (List<CodeToken> statement in statements)
+		foreach (Match match in tokenMatches)
 		{
-			//dependencies.Add(statementToString(statement));
-			
-			foreach (CodeToken token in statement)
-			{
-				if (token.getType() == CodeToken.TokenType.SYMBOL)
-				{
-					if (!dependencies.Contains(token.getValue()))
-					{
-						dependencies.Add(token.getValue());
-					}
-				}
-			}
+			dependencies.Add(match.Value);
 		}
 		
 		return dependencies;
-	}
-	
-	private List<List<CodeToken>> splitStatements(List<CodeToken> tokens)
-	{
-		CSharpTokenParser parser = new CSharpTokenParser();
-		List<List<CodeToken>> statements = parser.parseStatements(tokens);
-		
-		return statements;
-	}
-	
-	private string statementToString(List<CodeToken> statement)
-	{
-		string state = "";
-		
-		foreach (CodeToken token in statement)
-		{
-			state += token.getValue() + " ";
-		}
-		
-		return state;
 	}
 }
 

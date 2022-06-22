@@ -56,11 +56,8 @@ class CodeMakerForm : Form
 	{
 		new CodeMakerForm();
 		
-		CSharpTokenizer tokenizer = new CSharpTokenizer();
-		List<CodeToken> tokens = tokenizer.getTokenList(File.ReadAllText("C:\\code\\code_maker\\src\\ui\\CodeMakerForm.cs"));
-		
 		CSharpDependencyFinder finder = new CSharpDependencyFinder();
-		List<string> dependencies = finder.findDependencies(tokens);
+		List<string> dependencies = finder.findDependencies(File.ReadAllText("C:\\code\\code_maker\\src\\ui\\CodeMakerForm.cs"));
 		
 		Console.WriteLine("Dependencies...");
 		foreach (string depend in dependencies)
