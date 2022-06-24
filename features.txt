@@ -1,0 +1,18 @@
+CodeMaker Features TODO:
+
+----- Dependency Graph -----
+
+	--- Find all symbols in code file ---
+	--- Create dependency graph between files ---
+	--- Visualize dependency graph ---
+
+----- UI -----
+
+	--- No terminal ---
+	--- Basic toolbar ---
+		- New file -
+		- Open file -
+		- Save file -
+	--- Keyboard shortcuts ---
+	--- Read project directory for files & classes ---
+	--- Tab select multiple files ---
