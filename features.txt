@@ -1,18 +1,23 @@
-CodeMaker Features TODO:
+CodeMaker Requirements:
 
------ Dependency Graph -----
+CodeMaker is an IDE that allows users to visualize, refactor, and develop their projects more easily.
 
-	--- Find all symbols in code file ---
-	--- Create dependency graph between files ---
-	--- Visualize dependency graph ---
+IDE
 
------ UI -----
+- CodeMaker will contain a basic text editor
+-- The text editor will read a file and display its contents in an editable control
+-- The text editor will save its contents to a file (overwrite or new file)
 
-	--- No terminal ---
-	--- Basic toolbar ---
-		- New file -
-		- Open file -
-		- Save file -
-	--- Keyboard shortcuts ---
-	--- Read project directory for files & classes ---
-	--- Tab select multiple files ---
+- CodeMaker will display the file structure of a project
+-- The file structure display will show all files and subfolders of a selected folder
+-- The file structure display will allow users to quickly select and open a file for editing
+
+Visualize
+
+- CodeMaker will lint C# code
+-- The linter will highlight keywords
+-- The linter will highlight literals
+
+Refactor
+
+Develop
